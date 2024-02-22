@@ -122,7 +122,7 @@ async def login(request:Request, db: db_dependency):
         return templates.TemplateResponse("login.html", {"request": request, "msg": msg})
 
 
-@router.get("/auth/logout", response_class=HTMLResponse)
+@router.get("/logout", response_class=HTMLResponse)
 async def logout(request: Request):
     msg = "Logout successfully"
     response = templates.TemplateResponse("login.html", {"request": request, "msg": msg})
