@@ -69,7 +69,7 @@ async def create_new_url_post(request:Request,
             msg = "Custom URL cannot be longer than 20 characters"
             return templates.TemplateResponse("create-url.html", {"request": request, "msg": msg})
         if not custom_key.isalnum():  # Modify allowed characters as needed
-            msg = "Custom URL Name can only contain alphanumeric characters"
+            msg = "Custom URL Name can only contain alphanumeric characters with no spaces in between"
             return templates.TemplateResponse("create-url.html", {"request": request, "msg": msg})
 
         # Check for existing custom URL (optional, add if needed)
