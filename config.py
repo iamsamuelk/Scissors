@@ -3,7 +3,7 @@ from pydantic_settings import BaseSettings
 
 class Settings(BaseSettings):
     env_name: str = "Local"
-    base_url: str = "http://localhost:8000"
+    base_url: str = "https://scissors-nqsz.onrender.com"
     SQLALCHEMY_DATABASE_URL: str = "postgresql://miwbrjkx:QJomZKQhh0ugvXXC7322wQCUBdJnX0z7@stampy.db.elephantsql.com/miwbrjkx"
     
 class Config:
