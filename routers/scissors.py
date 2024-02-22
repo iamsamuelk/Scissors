@@ -27,28 +27,28 @@ def get_db():
 db_dependency = Annotated[Session, Depends(get_db)]
 user_dependency= Annotated [models.User, Depends(get_current_user)]
 
-@scissors_router.get("/scissors", response_class=HTMLResponse)
+@scissors_router.get("/", response_class=HTMLResponse)
 async def read_all_by_user(request:Request, db: db_dependency):
     user = await get_current_user(request)
     if user is None:
-        return RedirectResponse("/auth", status_code=status.HTTP_302_FOUND)
+        return RedirectResponse("/login", status_code=status.HTTP_302_FOUND)
     
     urls = db.query(models.URL).filter(models.URL.user_id == user.get("id")).all()
 
     return templates.TemplateResponse("home.html", {"request": request, "urls": urls})
 
-@scissors_router.get("/scissors/create-url", response_class=HTMLResponse)
+@scissors_router.get("/create-url", response_class=HTMLResponse)
 async def create_new_url(request:Request):
     return templates.TemplateResponse("create-url.html", {"request": request})
 
-@scissors_router.post("/scissors/create-url", response_class=HTMLResponse)
+@scissors_router.post("/create-url", response_class=HTMLResponse)
 async def create_new_url_post(request:Request, 
                               db: db_dependency, 
                               target_url: str = Form(...), 
                               custom_key: str = Form(...)):
     user = await get_current_user(request)
     if user is None:
-        return RedirectResponse("/auth", status_code=status.HTTP_302_FOUND)
+        return RedirectResponse("/login", status_code=status.HTTP_302_FOUND)
     
     if not validators.url(target_url):
         msg = "Your provided URL is not valid"
@@ -88,7 +88,7 @@ async def create_new_url_post(request:Request,
     db.add(db_url)
     db.commit()
     db.refresh(db_url)
-    return RedirectResponse("/scissors", status_code=status.HTTP_302_FOUND)
+    return RedirectResponse("/", status_code=status.HTTP_302_FOUND)
 
 
 # Important for the whole project - This is the redirecting code
@@ -115,31 +115,31 @@ def get_admin_info(db_url: models.URL) -> schemas.URLInfo:
     return db_url
 
 
-@scissors_router.get("/scissors/activate/{secret_key}", response_class=HTMLResponse)
+@scissors_router.get("/activate/{secret_key}", response_class=HTMLResponse)
 async def activate_url(request: Request, secret_key: str, db: db_dependency):
     user = await get_current_user(request)
     if user is None:
-        return RedirectResponse("/auth", status_code=status.HTTP_302_FOUND)
+        return RedirectResponse("/login", status_code=status.HTTP_302_FOUND)
     
     db_url = crud.activate_db_url_by_secret_key(user=user, db=db, secret_key=secret_key)
         
     if db_url is None:
-        return RedirectResponse("/scissors", status_code=status.HTTP_302_FOUND)
+        return RedirectResponse("/", status_code=status.HTTP_302_FOUND)
         
-    return RedirectResponse("/scissors", status_code=status.HTTP_302_FOUND)
+    return RedirectResponse("/", status_code=status.HTTP_302_FOUND)
 
-@scissors_router.get("/scissors/deactivate/{secret_key}", response_class=HTMLResponse)
+@scissors_router.get("/deactivate/{secret_key}", response_class=HTMLResponse)
 async def deactivate_url(request: Request, secret_key: str, db: db_dependency):
     user = await get_current_user(request)
     if user is None:
-        return RedirectResponse("/auth", status_code=status.HTTP_302_FOUND)
+        return RedirectResponse("/login", status_code=status.HTTP_302_FOUND)
     
     db_url = crud.deactivate_db_url_by_secret_key(user=user, db=db, secret_key=secret_key)
     
     if db_url is None:
-        return RedirectResponse("/scissors", status_code=status.HTTP_302_FOUND)
+        return RedirectResponse("/", status_code=status.HTTP_302_FOUND)
     
-    return RedirectResponse("/scissors", status_code=status.HTTP_302_FOUND)
+    return RedirectResponse("/", status_code=status.HTTP_302_FOUND)
 
 
 

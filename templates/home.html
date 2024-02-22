@@ -35,14 +35,14 @@
                 <td><img src= https://api.qrserver.com/v1/create-qr-code/?size=50x50&data={{ url.url }} alt="QR Code"></td>
                 <td>
                     <button
-                    onclick="window.location.href='/scissors/activate/{{url.secret_key}}'"
+                    onclick="window.location.href='/activate/{{url.secret_key}}'"
                     type="button"
                     class="btn btn-success"
                     >
                     Activate
                     </button>
                     <button
-                    onclick="window.location.href='/scissors/deactivate/{{url.secret_key}}'"
+                    onclick="window.location.href='/deactivate/{{url.secret_key}}'"
                     type="button"
                     class="btn btn-danger"
                     >
@@ -58,14 +58,14 @@
                 <td><img src= https://api.qrserver.com/v1/create-qr-code/?size=50x50&data={{ url.url }} alt="QR Code"></td>
                 <td>
                     <button
-                    onclick="window.location.href='/scissors/activate/{{url.secret_key}}'"
+                    onclick="window.location.href='/activate/{{url.secret_key}}'"
                     type="button"
                     class="btn btn-success"
                     >
                     Activate
                     </button>
                     <button
-                    onclick="window.location.href='/scissors/activate/{{url.secret_key}}'"
+                    onclick="window.location.href='/deactivate/{{url.secret_key}}'"
                     type="button"
                     class="btn btn-danger"
                     >
@@ -76,7 +76,7 @@
                 {% endif %} {% endfor %}
             </tbody>
             </table>
-            <a href="scissors/create-url" class="btn btn-primary">Create new shortened URL</a>
+            <a href="/create-url" class="btn btn-primary">Create new shortened URL</a>
         </div>
     </div>
 </div>

@@ -32,7 +32,7 @@ SECRET_KEY = "511c840c9015ae04929d52c4176d711dd8dd7836183df091306c96547e10df40"
 ALGORITHM = "HS256"
 
 bcrpyt_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-oauth2_bearer = OAuth2PasswordBearer(tokenUrl="auth/token")
+oauth2_bearer = OAuth2PasswordBearer(tokenUrl="token")
 
 def get_db():
     db = SessionLocal()
@@ -74,7 +74,7 @@ async def get_current_user(request: Request):
                             detail="Invalid authentication credentials")
 
 # Create a new user
-@router.post("/auth/create_user", status_code=status.HTTP_201_CREATED)
+@router.post("/create_user", status_code=status.HTTP_201_CREATED)
 async def Create_user(db: db_dependency, create_user_request: schemas.CreateUserRequest):
     create_user_model = models.User(
         username = create_user_request.username,
@@ -85,7 +85,7 @@ async def Create_user(db: db_dependency, create_user_request: schemas.CreateUser
     db.commit()
 
 
-@router.post("/auth/token", response_model=schemas.Token)
+@router.post("/token", response_model=schemas.Token)
 async def login_for_access_token(response: Response, form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
                                  db: db_dependency):
     user = authenticate_user(form_data.username, form_data.password, db)
@@ -100,16 +100,16 @@ async def login_for_access_token(response: Response, form_data: Annotated[OAuth2
     return True
     
 
-@router.get("/auth", response_class=HTMLResponse)
+@router.get("/login", response_class=HTMLResponse)
 async def authenticationpage(request: Request):
     return templates.TemplateResponse("login.html", {"request": request})
 
-@router.post("/auth", response_class=HTMLResponse)
+@router.post("/login", response_class=HTMLResponse)
 async def login(request:Request, db: db_dependency):
     try:
         form = LoginForm(request)
         await form.create_outh_form()
-        response = RedirectResponse(url="/scissors", status_code=status.HTTP_302_FOUND)
+        response = RedirectResponse(url="/", status_code=status.HTTP_302_FOUND)
         
         validate_user_cookie = await login_for_access_token(response=response, form_data=form, db=db)
         
@@ -130,11 +130,11 @@ async def logout(request: Request):
     return response
 
 
-@router.get("/auth/register", response_class=HTMLResponse)
+@router.get("/register", response_class=HTMLResponse)
 async def register(request: Request):
     return templates.TemplateResponse("register.html", {"request": request})
 
-@router.post("/auth/register", response_class=HTMLResponse)
+@router.post("/register", response_class=HTMLResponse)
 async def register_user(request: Request, db: db_dependency, username: str = Form(...), email: str = Form(...),
                         password: str = Form(...), password2: str = Form(...),):
     
