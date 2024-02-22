@@ -1,0 +1,82 @@
+{% include 'layoutloggedin.html' %}
+  
+<div class="container">
+    <div class="card text-center">
+        <div class="card-body">
+            {% if msg %}
+                <div class="alert alert-danger" role="alert">
+                    {{ msg }}
+                </div>
+            {% endif %}
+            Your URLs
+        </div>
+        <div>
+            <h5 class="card-title">List of your URLs!</h5>
+            <p class="card-text">
+            Information regarding the shortened URl.
+            </p>
+    
+            <table class="table table-hover">
+            <thead>
+                <tr>
+                <th scope="col">#</th>
+                <th scope="col">Original Url</th>
+                <th scope="col">Shortened Url</th>
+                <th scope="col">QR Code</th>
+                <th scope="col">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for url in urls %} {% if url.is_active == True %}
+                <tr class="pointer">
+                <td>{{loop.index}}</td>
+                <td><a href={{url.target_url}}>{{url.target_url}}</a></td>                
+                <td><a href={{url.url}}>{{url.url}}</a></td>
+                <td><img src= https://api.qrserver.com/v1/create-qr-code/?size=50x50&data={{ url.url }} alt="QR Code"></td>
+                <td>
+                    <button
+                    onclick="window.location.href='/scissors/activate/{{url.secret_key}}'"
+                    type="button"
+                    class="btn btn-success"
+                    >
+                    Activate
+                    </button>
+                    <button
+                    onclick="window.location.href='/scissors/deactivate/{{url.secret_key}}'"
+                    type="button"
+                    class="btn btn-danger"
+                    >
+                    Deactivate
+                    </button>
+                </td>
+                </tr>
+                {% else %}
+                <tr class="pointer alert alert-danger">
+                <td>{{loop.index}}</td>
+                <td class="strike-through-td">{{url.target_url}}</td>
+                <td>{{url.url}}</td>
+                <td><img src= https://api.qrserver.com/v1/create-qr-code/?size=50x50&data={{ url.url }} alt="QR Code"></td>
+                <td>
+                    <button
+                    onclick="window.location.href='/scissors/activate/{{url.secret_key}}'"
+                    type="button"
+                    class="btn btn-success"
+                    >
+                    Activate
+                    </button>
+                    <button
+                    onclick="window.location.href='/scissors/activate/{{url.secret_key}}'"
+                    type="button"
+                    class="btn btn-danger"
+                    >
+                    Deactivate
+                    </button>
+                </td>
+                </tr>
+                {% endif %} {% endfor %}
+            </tbody>
+            </table>
+            <a href="scissors/create-url" class="btn btn-primary">Create new shortend URL</a>
+        </div>
+    </div>
+</div>
