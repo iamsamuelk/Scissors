@@ -31,11 +31,11 @@ user_dependency= Annotated [models.User, Depends(get_current_user)]
 # ***********   FUNCTIONS  ************
 
 async def get_current_url(request: Request, db: db_dependency) -> Optional[models.URL]:
-    current_url = request.url.path
-    if current_url == "/url-details":
+    url = request.url.path
+    if url == "/url-details":
         url_key = request.query_params.get("key")
         if url_key:
-            url = await db.query(models.URL).filter(models.URL.key == url_key).first()
+            url = db.query(models.URL).filter(models.URL.key == url_key).first()
             return url
     return None
 
@@ -60,14 +60,14 @@ async def read_all_by_user(request:Request, db: db_dependency):
 
 
 @scissors_router.get("/url-details", response_class=HTMLResponse)
-async def read_all_by_user(request:Request, db: db_dependency):
-    url = await get_current_url(request)
+async def read_all_by_url(request:Request, db: db_dependency):
+    url = await get_current_url(request, db)
     if url is None:
         return RedirectResponse("/home", status_code=status.HTTP_302_FOUND)
     
     clicks = db.query(models.Click).filter(models.Click.url_id == url.id).all()
 
-    return templates.TemplateResponse("url-details.html", {"request": request, "clicks": clicks})
+    return templates.TemplateResponse("url-details.html", {"request": request, "clicks": clicks, "url": url})
 
 
 @scissors_router.get("/create-url", response_class=HTMLResponse)
