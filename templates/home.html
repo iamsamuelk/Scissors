@@ -24,54 +24,57 @@
                 <th scope="col">Shortened Url</th>
                 <th scope="col">QR Code</th>
                 <th scope="col">Actions</th>
+                <th scope="col">URL details</th>
                 </tr>
             </thead>
             <tbody>
                 {% for url in urls %} {% if url.is_active == True %}
                 <tr class="pointer">
-                <td>{{loop.index}}</td>
-                <td><a href={{url.target_url}}>{{url.target_url}}</a></td>                
-                <td><a href={{url.url}}>{{url.url}}</a></td>
-                <td><img src= https://api.qrserver.com/v1/create-qr-code/?size=50x50&data={{ url.url }} alt="QR Code"></td>
-                <td>
-                    <button
-                    onclick="window.location.href='/activate/{{url.secret_key}}'"
-                    type="button"
-                    class="btn btn-success"
-                    >
-                    Activate
-                    </button>
-                    <button
-                    onclick="window.location.href='/deactivate/{{url.secret_key}}'"
-                    type="button"
-                    class="btn btn-danger"
-                    >
-                    Deactivate
-                    </button>
-                </td>
+                    <td>{{loop.index}}</td>
+                    <td><a href={{url.target_url}}>{{url.target_url}}</a></td>                
+                    <td><a href={{url.url}}>{{url.url}}</a></td>
+                    <td><img src= https://api.qrserver.com/v1/create-qr-code/?size=50x50&data={{ url.url }} alt="QR Code"></td>
+                    <td>
+                        <button
+                        onclick="window.location.href='/activate/{{url.secret_key}}'"
+                        type="button"
+                        class="btn btn-success"
+                        >
+                        Activate
+                        </button>
+                        <button
+                        onclick="window.location.href='/deactivate/{{url.secret_key}}'"
+                        type="button"
+                        class="btn btn-danger"
+                        >
+                        Deactivate
+                        </button>
+                    </td>
+                    <td><a href= /url-details?key={{url.key}} >Details</a></td>
                 </tr>
                 {% else %}
                 <tr class="pointer alert alert-danger">
-                <td>{{loop.index}}</td>
-                <td class="strike-through-td">{{url.target_url}}</td>
-                <td>{{url.url}}</td>
-                <td><img src= https://api.qrserver.com/v1/create-qr-code/?size=50x50&data={{ url.url }} alt="QR Code"></td>
-                <td>
-                    <button
-                    onclick="window.location.href='/activate/{{url.secret_key}}'"
-                    type="button"
-                    class="btn btn-success"
-                    >
-                    Activate
-                    </button>
-                    <button
-                    onclick="window.location.href='/deactivate/{{url.secret_key}}'"
-                    type="button"
-                    class="btn btn-danger"
-                    >
-                    Deactivate
-                    </button>
-                </td>
+                    <td>{{loop.index}}</td>
+                    <td class="strike-through-td">{{url.target_url}}</td>
+                    <td>{{url.url}}</td>
+                    <td><img src= https://api.qrserver.com/v1/create-qr-code/?size=50x50&data={{ url.url }} alt="QR Code"></td>
+                    <td>
+                        <button
+                        onclick="window.location.href='/activate/{{url.secret_key}}'"
+                        type="button"
+                        class="btn btn-success"
+                        >
+                        Activate
+                        </button>
+                        <button
+                        onclick="window.location.href='/deactivate/{{url.secret_key}}'"
+                        type="button"
+                        class="btn btn-danger"
+                        >
+                        Deactivate
+                        </button>
+                    </td>
+                    <td><a href= /url-details?key={{url.key}} >Details</a></td>
                 </tr>
                 {% endif %} {% endfor %}
             </tbody>

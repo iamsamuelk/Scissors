@@ -43,6 +43,9 @@ def get_db():
 
 db_dependency = Annotated[Session, Depends(get_db)]
 
+
+# ***********   FUNCTIONS  ************
+
 def authenticate_user(username: str, password: str, db):
     user = db.query(models.User).filter(models.User.username == username).first()
     if not user:
@@ -52,11 +55,13 @@ def authenticate_user(username: str, password: str, db):
         return False
     return user
 
+
 def create_access_token(username: str, user_id: int, expires_delta: timedelta):
     encode = {'sub': username, 'id': user_id}
     expires = datetime.now() + expires_delta
     encode.update({'exp': expires})
     return jwt.encode(encode, SECRET_KEY, algorithm=ALGORITHM)
+
 
 async def get_current_user(request: Request):
     try:
@@ -72,6 +77,9 @@ async def get_current_user(request: Request):
     except JWTError:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
                             detail="Invalid authentication credentials")
+
+
+# ***********   ROUTES  ************
 
 # Create a new user
 @router.post("/create_user", status_code=status.HTTP_201_CREATED)

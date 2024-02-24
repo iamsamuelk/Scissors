@@ -1,7 +1,7 @@
 from fastapi import Depends, HTTPException, Request, status, APIRouter, Form
 from fastapi.responses import RedirectResponse, HTMLResponse
 from fastapi.templating import Jinja2Templates
-from typing import Annotated
+from typing import Annotated, Optional
 from sqlalchemy.orm import Session
 from starlette.datastructures import URL
 from datetime import datetime
@@ -27,6 +27,27 @@ def get_db():
 db_dependency = Annotated[Session, Depends(get_db)]
 user_dependency= Annotated [models.User, Depends(get_current_user)]
 
+
+# ***********   FUNCTIONS  ************
+
+async def get_current_url(request: Request, db: db_dependency) -> Optional[models.URL]:
+    current_url = request.url.path
+    if current_url == "/url-details":
+        url_key = request.query_params.get("key")
+        if url_key:
+            url = await db.query(models.URL).filter(models.URL.key == url_key).first()
+            return url
+    return None
+
+
+def get_admin_info(db_url: models.URL) -> schemas.URLInfo:
+    base_url = URL(get_settings().base_url)
+    db_url.url = str(base_url.replace(path=db_url.key))
+    return db_url
+
+
+# ***********   ROUTES  ************
+
 @scissors_router.get("/", response_class=HTMLResponse)
 async def read_all_by_user(request:Request, db: db_dependency):
     user = await get_current_user(request)
@@ -36,6 +57,18 @@ async def read_all_by_user(request:Request, db: db_dependency):
     urls = db.query(models.URL).filter(models.URL.user_id == user.get("id")).all()
 
     return templates.TemplateResponse("home.html", {"request": request, "urls": urls})
+
+
+@scissors_router.get("/url-details", response_class=HTMLResponse)
+async def read_all_by_user(request:Request, db: db_dependency):
+    url = await get_current_url(request)
+    if url is None:
+        return RedirectResponse("/home", status_code=status.HTTP_302_FOUND)
+    
+    clicks = db.query(models.Click).filter(models.Click.url_id == url.id).all()
+
+    return templates.TemplateResponse("url-details.html", {"request": request, "clicks": clicks})
+
 
 @scissors_router.get("/create-url", response_class=HTMLResponse)
 async def create_new_url(request:Request):
@@ -107,12 +140,6 @@ def forward_to_target_url(
         return RedirectResponse(db_url.target_url)
     else:
         raise HTTPException(status_code=404, detail=f"URL '{request.url}' doesn't exist")
-    
-    
-def get_admin_info(db_url: models.URL) -> schemas.URLInfo:
-    base_url = URL(get_settings().base_url)
-    db_url.url = str(base_url.replace(path=db_url.key))
-    return db_url
 
 
 @scissors_router.get("/activate/{secret_key}", response_class=HTMLResponse)
@@ -127,6 +154,7 @@ async def activate_url(request: Request, secret_key: str, db: db_dependency):
         return RedirectResponse("/", status_code=status.HTTP_302_FOUND)
         
     return RedirectResponse("/", status_code=status.HTTP_302_FOUND)
+
 
 @scissors_router.get("/deactivate/{secret_key}", response_class=HTMLResponse)
 async def deactivate_url(request: Request, secret_key: str, db: db_dependency):
@@ -148,7 +176,6 @@ async def deactivate_url(request: Request, secret_key: str, db: db_dependency):
 
 
 # ROUTERS USED FOR FASTAPI DOCS
-
 
 # @scissors_router.get("/test")
 # async def test(request: Request):
