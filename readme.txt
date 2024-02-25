@@ -20,3 +20,7 @@ Technology Stack:
 
 API Documentation:
 Scissor's API is comprehensively documented using OpenAPI (Swagger), providing clarity and ease of integration. Access the detailed API specification at http://localhost:8000/docs.
+
+
+***NOTE***
+the render website name made the shortened link longer
