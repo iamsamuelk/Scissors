@@ -9,7 +9,7 @@ import crud, models, schemas, validators, io, requests
 from database import SessionLocal, engine
 from config import get_settings
 from .auth import get_current_user
-
+from main import cache
 
 scissors_router = APIRouter()
 
@@ -49,6 +49,7 @@ def get_admin_info(db_url: models.URL) -> schemas.URLInfo:
 # ***********   ROUTES  ************
 
 @scissors_router.get("/", response_class=HTMLResponse)
+@cache(expire=3600)
 async def read_all_by_user(request:Request, db: db_dependency):
     user = await get_current_user(request)
     if user is None:
@@ -60,6 +61,7 @@ async def read_all_by_user(request:Request, db: db_dependency):
 
 
 @scissors_router.get("/url-details", response_class=HTMLResponse)
+@cache(expire=3600)
 async def read_all_by_url(request:Request, db: db_dependency):
     url = await get_current_url(request, db)
     if url is None:
