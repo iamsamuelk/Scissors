@@ -12,7 +12,7 @@ Key Features:
 
 
 Technology Stack:
-- Backend: Python (FastAPI)
+- Backend: Python (FastAPI), Django
 - Database: Postgresql
 - Deployment: Render (https://scissors-nqsz.onrender.com/)
 - QR Code API: https://goqr.me/api/
